@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String @id @default(cuid())
+  clerkId String @unique
+
+  role         Role
+  restaurantId String?
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Restaurant {
+  id        String      @id @default(cuid())
+  name      String
+  location  String?
+  users     User[]
+  inventory Inventory[]
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  documents   String[] // ссылки на документы (можно заменить на другую модель в будущем)
+  rating      Int? // 1–5
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  status       OrderStatus @default(DRAFT)
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  supplier     Supplier    @relation(fields: [supplierId], references: [id])
+  supplierId   String
+  createdBy    User        @relation(fields: [createdById], references: [id])
+  createdById  String
+
+  items       OrderItem[]
+  totalAmount Float? // можно вычислять динамически, но можно и сохранять
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  name     String
+  quantity Float
+  unit     String // "kg", "pcs", "liters", и т.д.
+  price    Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Inventory {
+  id           String     @id @default(cuid())
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  name     String
+  quantity Float
+  unit     String
+
+  lastUpdated DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+enum Role {
+  OWNER
+  CHAIN_MANAGER
+  RESTAURANT_MANAGER
+  CHEF
+  ACCOUNTANT
+}
+
+enum OrderStatus {
+  DRAFT
+  PLACED
+  DELIVERED
+  CANCELED
+}
