@@ -1,4 +1,5 @@
 import {ClerkProvider} from "@clerk/nextjs";
+import {Toaster} from "sonner";
 
 interface RootProviderProps {
 	children?: React.ReactNode;
@@ -7,6 +8,7 @@ interface RootProviderProps {
 export const RootProvider = ({children}: RootProviderProps) => {
 	return (
 		<ClerkProvider>
+			<Toaster/>
 			{children}
 		</ClerkProvider>
 	)

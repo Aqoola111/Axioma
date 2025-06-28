@@ -36,9 +36,9 @@ model Restaurant {
 model Supplier {
   id          String   @id @default(cuid())
   name        String
-  contactName String?
-  email       String?
-  phone       String?
+  contactName String
+  email       String
+  phone       String
   documents   String[] // ссылки на документы (можно заменить на другую модель в будущем)
   rating      Int? // 1–5
 

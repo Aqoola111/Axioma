@@ -1,13 +1,14 @@
-interface DashboardLayoutProps {
-	children: React.ReactNode;
-}
+﻿import {SidebarProvider} from "@/components/ui/sidebar";
+import CustomSidebar from "@/app/dashboard/_components/custom-sidebar";
+import CustomSidebarInset from "@/app/dashboard/_components/custom-sidebar-inset";
 
-const DashboardLayout = ({children}: DashboardLayoutProps) => {
+export default function DashboardLayout({children}: { children: React.ReactNode }) {
 	return (
-		<div>
-			DashboardLayout
-			{children}
-		</div>
-	)
+		<SidebarProvider>
+			<CustomSidebar/>
+			<CustomSidebarInset>
+				{children}
+			</CustomSidebarInset>
+		</SidebarProvider>
+	);
 }
-export default DashboardLayout
